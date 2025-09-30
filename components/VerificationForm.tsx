@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Button from './ui/Button';
 import Input from './ui/Input';
@@ -16,6 +15,7 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ onSubmit, isLoading
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!code.trim()) return;
     onSubmit(code);
   };
 
@@ -36,11 +36,11 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ onSubmit, isLoading
           maxLength={6}
           className="text-center tracking-[0.5em]"
         />
-        <Button type="submit" disabled={isLoading} fullWidth>
+        <Button type="submit" loading={isLoading} fullWidth>
           {isLoading ? 'Verificando...' : 'Confirmar Pedido'}
         </Button>
       </form>
-       <button onClick={onBack} className="text-sm text-coffee-500 hover:text-coffee-800 mt-4 text-center w-full">
+       <button onClick={onBack} className="text-sm text-coffee-500 hover:text-coffee-800 mt-4 text-center w-full disabled:opacity-50" disabled={isLoading}>
             &larr; Volver al formulario
         </button>
     </Card>

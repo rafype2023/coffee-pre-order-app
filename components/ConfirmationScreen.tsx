@@ -1,4 +1,3 @@
-
 import React from 'react';
 import type { OrderDetails } from '../types';
 import Button from './ui/Button';
@@ -12,7 +11,7 @@ interface ConfirmationScreenProps {
 
 const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({ orderDetails, onNewOrder }) => {
   return (
-    <Card>
+    <Card className="animate-fade-in-up">
       <div className="text-center">
         <CheckCircleIcon className="w-16 h-16 text-green-500 mx-auto mb-4" />
         <h2 className="text-2xl font-bold mb-2 text-coffee-800 font-serif">¡Pedido Confirmado!</h2>

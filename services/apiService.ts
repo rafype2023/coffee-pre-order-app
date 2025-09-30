@@ -1,4 +1,3 @@
-
 import { API_BASE_URL } from '../constants';
 import type { OrderDetails } from '../types';
 
@@ -14,36 +13,58 @@ interface VerifyOrderResponse {
     orderStatus?: 'Confirmed' | 'Failed';
 }
 
-export const createOrder = async (orderDetails: OrderDetails): Promise<CreateOrderResponse> => {
-  const response = await fetch(`${API_BASE_URL}/api/orders`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(orderDetails),
-  });
+/**
+ * A reusable fetch wrapper to handle API requests and errors gracefully.
+ * @param url The URL to fetch.
+ * @param options The request options.
+ * @returns The JSON response from the API.
+ */
+const handleFetch = async (url: string, options: RequestInit) => {
+  try {
+    const response = await fetch(url, options);
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ message: 'No se pudo crear el pedido. Revisa los detalles e inténtalo de nuevo.' }));
-    throw new Error(errorData.message || 'Error del servidor.');
+    if (!response.ok) {
+      // Try to parse a JSON error from the server, with a fallback.
+      const errorData = await response.json().catch(() => ({ 
+        message: `Error del servidor (código ${response.status}). Por favor, inténtalo de nuevo más tarde.` 
+      }));
+      throw new Error(errorData.message || 'Ocurrió un error inesperado en la respuesta del servidor.');
+    }
+
+    return response.json();
+  } catch (error) {
+    // This block catches network errors (e.g., "Load failed", CORS issues) and errors thrown above.
+    if (error instanceof TypeError) { // "Failed to fetch" is a TypeError
+        throw new Error(`No se pudo conectar con el servidor. Esto puede ser un problema de CORS o la API no está disponible en ${API_BASE_URL}.`);
+    }
+    
+    // Re-throw custom errors from the !response.ok block.
+    if (error instanceof Error) {
+        throw error;
+    }
+    
+    // Fallback for any other unexpected errors.
+    throw new Error('Ha ocurrido un error de red desconocido.');
   }
+};
 
-  return response.json();
+
+export const createOrder = async (orderDetails: OrderDetails): Promise<CreateOrderResponse> => {
+    return handleFetch(`${API_BASE_URL}/api/orders`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderDetails),
+    });
 };
 
 export const verifyOrder = async (orderId: string, code: string): Promise<VerifyOrderResponse> => {
-    const response = await fetch(`${API_BASE_URL}/api/orders/verify`, {
+    return handleFetch(`${API_BASE_URL}/api/orders/verify`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ orderId, code }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: 'Código de verificación inválido o expirado.' }));
-        throw new Error(errorData.message || 'Error del servidor al verificar.');
-      }
-
-      return response.json();
+    });
 }

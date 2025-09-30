@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { OrderStage } from './types';
 import type { OrderDetails } from './types';
@@ -91,7 +90,7 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-coffee-100">
-       <header className="text-center mb-8">
+       <header className="text-center mb-8 animate-fade-in-up">
           <div className="flex justify-center items-center gap-4">
             <CoffeeIcon className="w-16 h-16 text-coffee-800" />
             <div>
@@ -104,9 +103,12 @@ const App: React.FC = () => {
       <main className="w-full max-w-md">
         {renderStage()}
         {error && (
-            <div className="mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative" role="alert">
+            <div className="mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative animate-fade-in-up" role="alert">
                 <strong className="font-bold">Error: </strong>
-                <span className="block sm:inline">{error}</span>
+                <span className="block sm:inline pr-6">{error}</span>
+                <button onClick={() => setError(null)} className="absolute top-0 bottom-0 right-0 px-4 py-3" aria-label="Cerrar">
+                    <span className="text-2xl text-red-700">&times;</span>
+                </button>
             </div>
         )}
       </main>

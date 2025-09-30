@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface CardProps {
@@ -8,7 +7,7 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({ children, className }) => {
   return (
-    <div className={`bg-white p-8 rounded-xl shadow-lg transition-all duration-300 ${className}`}>
+    <div className={`bg-white p-8 rounded-xl shadow-lg transition-all duration-300 animate-fade-in-up ${className}`}>
       {children}
     </div>
   );
